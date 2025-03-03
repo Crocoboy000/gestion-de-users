@@ -4,20 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Friend;
+
 
 class DashController extends Controller
 {
     public function index()
     {
-        // Explicitly get the authenticated user
         $user = Auth::user();
+        $totalFriends = Friend::where('user_id', $user->id)
+            ->where('status', 'accepted')
+            ->count();
 
-        // If no user is authenticated, redirect to login
-        if (!$user) {
-            return redirect()->route('login');
-        }
+        $pendingRequests = Friend::where('friend_id', $user->id)
+            ->where('status', 'pending')
+            ->count();
 
-        // Pass the user to the dashboard view
-        return view('dashboard', compact('user'));
+        $recentActivities = Friend::where(function($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('friend_id', $user->id);
+        })
+        ->with(['user', 'friend'])
+        ->latest()
+        ->take(5)
+        ->get();
+
+        return view('dashboard', compact('user', 'totalFriends', 'pendingRequests', 'recentActivities'));
     }
 }

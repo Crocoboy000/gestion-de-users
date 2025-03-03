@@ -9,7 +9,10 @@ class WelcomeController extends Controller
 {
     public function index()
     {
-        $onlineUsers = User::where('status', 'online')->get();
-        return view('/welcome', compact('onlineUsers'));
+        $activeUsers = User::where('status', 'online')
+        ->take(5)
+        ->get();
+
+return view('welcome', compact('activeUsers'));
     }
 }

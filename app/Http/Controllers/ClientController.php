@@ -14,24 +14,20 @@ class ClientController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('role', 'client');
+        $query = User::query();
 
         // Search functionality
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
-        }
 
         // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
 
-        $users = $query->paginate(10);
 
-        return view('clients.index', compact('users'));
+        // Role filter
+
+        $clients = $query->where("role","client")->latest()->paginate(12);
+
+        return view('clients.index', [
+            'clients' => $clients,
+        ]);
     }
 
     /**
@@ -70,9 +66,21 @@ class ClientController extends Controller
      */
     public function show(User $client)
     {
-        // Ensure the user is a client
-        if ($client->role !== 'client') {
-            abort(404);
+        if (request()->ajax()) {
+            return response()->json([
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'avatar' => $client->avatar,
+                'status' => $client->status,
+                'role' => $client->role,
+                'phone' => $client->phone,
+                'location' => $client->location,
+                'occupation' => $client->occupation,
+                'website' => $client->website,
+                'bio' => $client->bio,
+                'joinDate' => $client->created_at->format('F Y')
+            ]);
         }
 
         return view('clients.show', compact('client'));

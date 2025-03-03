@@ -1,112 +1,122 @@
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ config('app.name', 'USERS.ON') }} Dashboard</title>
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  @stack('styles')
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USERS.ON - Professional User Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-      .hero {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
-    /* Purple gradient */
-}
-@media (max-width: 768px) {
-.nav-link {
-@apply py-4 text-xl;
-}
-}
-.profile-status::before {
-    content: '';
-    @apply w-2 h-2 rounded-full absolute bottom-0 right-0 border-2 border-white;
-}
-.active::before { background: #059669; }
-.inactive::before { background: #dc2626; }
-.profile-status.inactive::before { transform: translateX(calc(100% - 2px)); }
-.profile-status.active::before { transform: translateX(calc(100% - 2px)); }
-.logo-gradient {
-background-image: linear-gradient(45deg, #3b82f6, #1e40af, #000000);
--webkit-background-clip: text;
-background-clip: text;
-color: transparent;
-}
-.profile-image {
-    background-image: url('https://ui-avatars.com/api/?name=John+Doe&background=2563eb&color=fff');
-    background-size: cover;
-    background-position: center;
-}
-.btn-primary {
-background: linear-gradient(45deg, #3b82f6, #1e40af);
-color: white;
-transition: all 0.3s ease;
-}
+        /* Navbar Animation */
+        .nav-scroll {
+            @apply bg-white/90 backdrop-blur-md shadow-lg;
+            animation: slideDown 0.5s ease-in-out;
+        }
 
-.btn-primary:hover {
-background: linear-gradient(45deg, #1e40af, #3b82f6);
-transform: translateY(-2px);
-}
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-.btn-secondary {
-background: transparent;
-border: 2px solid #3b82f6;
-color: #1e40af;
-position: relative;
-overflow: hidden;
-}
+        /* Link Hover Effects */
+        .nav-link {
+            position: relative;
+            @apply text-gray-700 hover:text-blue-600 transition-colors duration-300;
+        }
 
-.btn-secondary::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-transition: all 0.4s ease;
-}
-.box:hover{
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
-}
-.box-pro:hover{
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.40);
-}
-.btn-secondary:hover::before {
-left: 100%;
-}
-.nav-link {
-@apply relative text-gray-600 hover:text-blue-700 transition-all duration-300 text-lg font-bold:800;
-}
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            @apply bg-blue-600;
+            transition: width 0.3s ease;
+        }
 
-.nav-link::after {
-@apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-blue-700 transition-all duration-300;
-}
-.nav-link:hover::after,
-.nav-link.active::after {
-@apply w-full;
-}
-.nav-link.active {
-@apply text-blue-700;
-}
-</style>
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Active Link */
+        .nav-link.active {
+            @apply text-blue-600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Dropdown Animation */
+        .dropdown-content {
+            transform-origin: top;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Button Hover Effect */
+        .nav-button {
+            @apply relative overflow-hidden transition-all duration-300;
+        }
+
+        .nav-button::before {
+            content: '';
+            @apply absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 transition-opacity duration-300;
+        }
+
+        .nav-button:hover::before {
+            @apply opacity-100;
+        }
+
+        /* Logo Animation */
+        .logo-animate {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-  <div class="min-h-screen flex flex-col">
-    <!-- Header -->
-    <x-navbarauth />
+<body class="font-sans antialiased">
+    <div x-data="{ scrolled: false }"
+         x-init="window.addEventListener('scroll', () => { scrolled = window.pageYOffset > 20 })"
+         class="min-h-screen bg-gray-100">
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6">
-      @yield('content')
-    </main>
+        <nav :class="{ 'nav-scroll': scrolled }"
+             class="fixed w-full top-0 z-50 transition-all duration-300">
+            <x-navbarauth />
+        </nav>
 
-    <!-- Footer -->
-    <footer class="bg-white shadow mt-8">
-      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-600 text-sm">
-        &copy; {{ date('Y') }} {{ config('app.name', 'USERS.ON') }}. All rights reserved.
-      </div>
-    </footer>
-  </div>
-  @stack('scripts')
+        <main class="pt-16">
+            {{ $slot }}
+        </main>
+    </div>
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

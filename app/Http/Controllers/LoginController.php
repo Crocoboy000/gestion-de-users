@@ -51,7 +51,7 @@ class LoginController extends BaseController
                 Log::error('Failed to update last_login_at: ' . $e->getMessage());
             }
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/dashboard')->with("status","registered successfully");
         }
 
         // If authentication fails, redirect back with error
